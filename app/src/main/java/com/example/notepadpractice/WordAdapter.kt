@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notepadpractice.databinding.ItemWordBinding
 
-class WordAdapter(private val list : MutableList<Word>) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() { //어댑터가 사용할 데이터 collection 필요함 data class MutableList 는 변경가능한 리스트(데이터 추가 삭제 가능)
+class WordAdapter(
+    private val list : MutableList<Word>,
+    private val itemClickListener: ItemClickListener? = null
+) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() { //어댑터가 사용할 데이터 collection 필요함 data class MutableList 는 변경가능한 리스트(데이터 추가 삭제 가능)
 
 
 
@@ -19,12 +22,12 @@ class WordAdapter(private val list : MutableList<Word>) : RecyclerView.Adapter<W
     }
 
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
-        holder.binding.apply{
-            val word = list[position]
-            textTextView.text =word.text
-            meanTextView.text = word.mean
-            typeChip.text = word.type
+        val word = list[position]
+        holder.bind(list[position])
+        holder.itemView.setOnClickListener{
+            itemClickListener?.onClick(word)
         }
+
     }
 
     override fun getItemCount(): Int { //어댑터가 가지고있는 데이터의 리스트 갯수를 반환
@@ -32,8 +35,21 @@ class WordAdapter(private val list : MutableList<Word>) : RecyclerView.Adapter<W
     }
 
 
-    class WordViewHolder(val binding: ItemWordBinding) : RecyclerView.ViewHolder(binding.root){
+    class WordViewHolder(private val binding: ItemWordBinding) : RecyclerView.ViewHolder(binding.root){
+        fun bind(word: Word){
+            binding.apply{
+                textTextView.text =word.text
+                meanTextView.text = word.mean
+                typeChip.text = word.type
 
+            }
+
+        }
     }
+
+    interface ItemClickListener {
+        fun onClick(word: Word)
+    }
+
 }
 
