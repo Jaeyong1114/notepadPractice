@@ -33,15 +33,17 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
         initRecyclerView()
         binding.addButton.setOnClickListener {
 
-
             Intent(this, AddActivity::class.java).let {
                 updateAddWordResult.launch(it)
             }
         }
 
-
         binding.deleteImageView.setOnClickListener{
             delete()
+        }
+
+        binding.editImageView.setOnClickListener{
+            edit()
         }
 
     }
@@ -78,6 +80,20 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
     }
 
 
+
+
+    private fun updateEditWord(word: Word){
+        val index = wordAdapter.list.indexOfFirst { it.id == word.id }
+        wordAdapter.list[index] = word
+        runOnUiThread{
+            selectedWord = word
+            wordAdapter.notifyItemChanged(index)
+            binding.textTextView.text = word.text
+            binding.meanTextView.text = word.mean
+
+        }
+    }
+
     private fun delete(){
         if(selectedWord == null) return
         Thread{
@@ -94,6 +110,23 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
             }
 
         }.start()
+    }
+
+
+    private val updateEditWordResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        // 액티비티에서 result 가져오기 데이터 바뀌면 액티비티 다시돌아왔을때 로드하기위해
+            result ->
+        val editWord=result.data?.getParcelableExtra<Word>("editWord")
+        if(result.resultCode == RESULT_OK && editWord !=null) {
+                updateEditWord(editWord)
+            }
+    }
+
+    private fun edit(){
+        if(selectedWord == null) return
+
+        val intent = Intent(this,AddActivity::class.java).putExtra("originWord",selectedWord)
+        updateEditWordResult.launch(intent)
     }
 
 
