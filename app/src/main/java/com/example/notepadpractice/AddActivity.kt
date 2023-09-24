@@ -2,6 +2,7 @@ package com.example.notepadpractice
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.example.notepadpractice.databinding.ActivityAddBinding
 import com.google.android.material.chip.Chip
 
@@ -13,6 +14,9 @@ class AddActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initViews()
+        binding.addButton.setOnClickListener{
+            add()
+        }
 
     }
 
@@ -35,5 +39,23 @@ class AddActivity : AppCompatActivity() {
             isClickable = true
 
         }
+    }
+
+    private fun add(){
+        val text = binding.textInputEditText.text.toString()
+        val mean = binding.meanTextInputEditText.text.toString()
+        val type = findViewById<Chip>( binding.typeChipGroup.checkedChipId).text.toString()
+        val word = Word(text,mean, type)
+
+        Thread{
+            AppDatabase.getInstance(this)?.wordDao()?.insert(word) //쓰레드를만들어 해당작업 완료
+            runOnUiThread{ // 토스트메세지는 UI 쓰레드에서 날려야하므로 여기다가 구현
+                Toast.makeText(this,"저장을 완료했습니다",Toast.LENGTH_SHORT).show()
+
+            }
+            finish()
+        }.start()
+
+
     }
 }
