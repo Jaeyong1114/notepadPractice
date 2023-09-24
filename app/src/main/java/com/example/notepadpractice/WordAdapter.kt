@@ -9,7 +9,7 @@ import com.example.notepadpractice.databinding.ItemWordBinding
 
 
 class WordAdapter(
-    private val list : MutableList<Word>,//어댑터가 사용할 데이터 collection 필요함 data class MutableList 는 변경가능한 리스트(데이터 추가 삭제 가능)
+    val list : MutableList<Word>,//어댑터가 사용할 데이터 collection 필요함 data class MutableList 는 변경가능한 리스트(데이터 추가 삭제 가능)
     private val itemClickListener: ItemClickListener? = null
 ) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() {
 
